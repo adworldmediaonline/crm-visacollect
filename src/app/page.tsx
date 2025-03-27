@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminApi } from "@/utils/api-endpoints";
 import { useAuth } from "@/contexts/AuthContext";
+import { AxiosError } from "axios"; // Import AxiosError
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -45,9 +46,11 @@ export default function LoginPage() {
       // Redirect to dashboard
       router.push("/dashboard");
 
-    } catch (err: any) {
+    } catch (err) {
+      // Properly type the error as AxiosError
+      const axiosError = err as AxiosError<{ message?: string }>;
       setError(
-        err.response?.data?.message || "Login failed. Please try again."
+        axiosError.response?.data?.message || "Login failed. Please try again."
       );
       setLoading(false);
     } finally {
@@ -67,7 +70,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Admin Login</h1>
-      
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
