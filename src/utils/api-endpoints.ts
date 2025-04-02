@@ -14,3 +14,8 @@ export const adminApi = {
 
   deleteAdmin: (id: string) => apiClient.delete(`/adminD/${id}`),
 };
+
+export const ethiopiaVisaApi = {
+  getAllApplications: () => apiClient.get("/ethiopia-visa/all"),
+  getApplicationById: (id: string) => apiClient.get(`/ethiopia-visa/applications/${id}`),
+};
