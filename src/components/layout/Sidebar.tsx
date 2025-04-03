@@ -46,7 +46,7 @@ export default function Sidebar({ collapsed, isMobile }: SidebarProps) {
     return (
         <aside
             className={cn(
-                "bg-white border-r border-gray-200 fixed left-0 top-16 h-[calc(100vh-4rem)] transition-all duration-300 z-10",
+                "bg-gray-200 border-r border-gray-400 fixed left-0 top-16 h-[calc(100vh-4rem)] transition-all duration-300 z-10",
                 collapsed ? "w-[80px]" : "w-[250px]"
             )}
         >

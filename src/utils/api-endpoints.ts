@@ -17,5 +17,29 @@ export const adminApi = {
 
 export const ethiopiaVisaApi = {
   getAllApplications: () => apiClient.get("/ethiopia-visa/all"),
-  getApplicationById: (id: string) => apiClient.get(`/ethiopia-visa/applications/${id}`),
+  getApplicationById: (id: string) => apiClient.get(`/ethiopia-visa/${id}`),
+  getVisaTypes: () => apiClient.get("/ethiopia-visa/visa-types/prices"),
+  // Add these new endpoints
+  getGovRefDetails: (applicationId: string, applicantType: string, additionalApplicantIndex?: number | null) => {
+    let endpoint = `/ethiopia-visa/gov-ref/${applicationId}/${applicantType}`;
+    if (applicantType === 'additional' && additionalApplicantIndex !== null) {
+      endpoint += `/${additionalApplicantIndex}`;
+    }
+    return apiClient.get(endpoint);
+  },
+  createOrUpdateGovRefDetails: (data: {
+    applicationId: string;
+    govRefEmail: string;
+    govRefNumber: string;
+    comment: string;
+    applicantType: 'primary' | 'additional';
+    additionalApplicantIndex: number | null;
+  }) => apiClient.post('/ethiopia-visa/gov-ref/create', data),
+  deleteGovRefDetails: (applicationId: string, applicantType: string, additionalApplicantIndex?: number | null) => {
+    let endpoint = `/ethiopia-visa/gov-ref/${applicationId}/${applicantType}`;
+    if (applicantType === 'additional' && additionalApplicantIndex !== null) {
+      endpoint += `/${additionalApplicantIndex}`;
+    }
+    return apiClient.delete(endpoint);
+  }
 };

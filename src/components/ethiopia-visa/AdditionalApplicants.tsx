@@ -1,0 +1,28 @@
+
+import { PersonalInfo, PassportInfo, Documents } from "@/types/ethiopia-visa";
+import { PersonalInfoCard } from "./PersonalInfo";
+import { PassportInfoCard } from "./PassportInfo";
+import { DocumentsCard } from "./Documents";
+
+interface ApplicantDetailsProps {
+    personalInfo: PersonalInfo;
+    passportInfo: PassportInfo;
+    documents: Documents;
+    isPrimary?: boolean;
+    visaType: string;
+}
+
+export function ApplicantDetails({
+    personalInfo,
+    passportInfo,
+    documents,
+    visaType
+}: ApplicantDetailsProps) {
+    return (
+        <div className="space-y-6">
+            <PersonalInfoCard personalInfo={personalInfo} />
+            <PassportInfoCard passportInfo={passportInfo} />
+            <DocumentsCard documents={documents} visaType={visaType} />
+        </div>
+    );
+}
