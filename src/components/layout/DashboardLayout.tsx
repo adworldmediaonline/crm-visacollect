@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     };
 
     return (
-        <div className="h-screen flex flex-col">
+        <div className="h-screen flex flex-col bg-gray-100">
             <Header
                 toggleSidebar={toggleSidebar}
                 sidebarCollapsed={sidebarCollapsed}

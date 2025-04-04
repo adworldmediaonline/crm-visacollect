@@ -32,17 +32,17 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { EthiopiaVisaApplication } from '@/types/ethiopia-visa'
+import { VisaApplication } from '@/types/ethiopia-visa'
 import { format } from 'date-fns'
 
-export function EthiopiaVisaTable({ data }: { data: EthiopiaVisaApplication[] }) {
+export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
     const router = useRouter()
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [globalFilter, setGlobalFilter] = useState('')
 
-    const columns: ColumnDef<EthiopiaVisaApplication>[] = [
+    const columns: ColumnDef<VisaApplication>[] = [
         {
             accessorKey: 'id',
             header: 'Application ID',
