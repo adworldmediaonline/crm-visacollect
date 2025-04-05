@@ -47,7 +47,7 @@ export function DocumentsCard({ documents, visaType }: DocumentsCardProps) {
     const { data, isLoading, error } = useQuery({
         queryKey: ['visaTypes'],
         queryFn: async () => {
-            const response = await ethiopiaVisaApi.getVisaTypes();
+            const response = await ethiopiaVisaApi?.getVisaTypes();
             return response.data.visaTypes as VisaTypeData[];
         }
     });
@@ -104,8 +104,8 @@ export function DocumentsCard({ documents, visaType }: DocumentsCardProps) {
             </CardHeader>
             <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {requiredDocumentTypes.length > 0 ? (
-                        requiredDocumentTypes.map(({ key, label }) => {
+                    {requiredDocumentTypes?.length > 0 ? (
+                        requiredDocumentTypes?.map(({ key, label }) => {
                             // Safely access document properties with null checks
                             const docObj = documents?.documents?.[key as keyof typeof documents.documents];
                             const hasDocument = !!docObj?.secure_url;

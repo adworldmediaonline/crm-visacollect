@@ -46,7 +46,7 @@ const EthiopiaVisaDetailPage = () => {
       <div className="container mx-auto py-6">
         <div className="flex items-center mb-6">
           <Link href="/ethiopia-visa">
-            <Button variant="ghost" size="sm" className="gap-2">
+            <Button variant="ghost" size="sm" className="gap-2 cursor-pointer">
               <ArrowLeft size={16} />
               Back to Applications
             </Button>
@@ -98,7 +98,11 @@ const EthiopiaVisaDetailPage = () => {
               )}
             </div>
 
-            <ApplicantTabs visaApplication={data} />
+            {data.additionalApplicants && (
+              <ApplicantTabs
+                visaApplication={data}
+              />
+            )}
           </>
         ) : (
           <Alert>

@@ -20,8 +20,8 @@ export function ApplicantDetails({
 }: ApplicantDetailsProps) {
     return (
         <div className="space-y-6">
-            <PersonalInfoCard personalInfo={personalInfo} />
-            <PassportInfoCard passportInfo={passportInfo} />
+            {personalInfo && <PersonalInfoCard personalInfo={personalInfo} />}
+            {passportInfo && <PassportInfoCard passportInfo={passportInfo} />}
             <DocumentsCard documents={documents} visaType={visaType} />
         </div>
     );
