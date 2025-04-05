@@ -41,5 +41,18 @@ export const ethiopiaVisaApi = {
       endpoint += `/${additionalApplicantIndex}`;
     }
     return apiClient.delete(endpoint);
-  }
+  },
+  // Email reminder endpoints
+  sendDocumentReminder: (applicationId: string) =>
+    apiClient.post(`/mail/documents-reminder/${applicationId}`),
+  sendPaymentReminder: (applicationId: string) =>
+    apiClient.post(`/mail/payment-reminder/${applicationId}`),
+  sendPassportReminder: (applicationId: string) =>
+    apiClient.post(`/mail/passport-reminder/${applicationId}`),
+  sendPhotoReminder: (applicationId: string) =>
+    apiClient.post(`/mail/photo-reminder/${applicationId}`),
+  sendApplicationConfirmation: (applicationId: string) =>
+    apiClient.post(`/mail/application-confirmation/${applicationId}`),
+  sendSpecificDocumentsReminder: (applicationId: string, data: { documentType: string }) =>
+    apiClient.post(`/mail/specific-documents-reminder/${applicationId}`, data),
 };

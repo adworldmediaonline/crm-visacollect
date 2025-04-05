@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { ethiopiaVisaApi } from '@/utils/api-endpoints';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import {
@@ -12,18 +12,27 @@ import {
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, ArrowLeft, Printer } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { ArrivalInfoCard } from '@/components/ethiopia-visa/ArrivalInfo';
 import { VisaDetailsCard } from '@/components/ethiopia-visa/VisaDetails';
 import { ApplicationStatusCard } from '@/components/ethiopia-visa/ApplicationStatus';
 import { ApplicantTabs } from '@/components/ethiopia-visa/ApplicantsTabs';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const EthiopiaVisaDetailPage = () => {
   const params = useParams();
   const id = params.id as string;
+  const [isReminderSending, setIsReminderSending] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['ethiopiaVisaApplication', id],
@@ -32,15 +41,71 @@ const EthiopiaVisaDetailPage = () => {
       return response.data;
     },
   });
-  //   if (isSuccess) {
-  //     console.log(data);
-  //     return (
-  //       <div>
-  //         <h1>Application Details</h1>
-  //         <pre>{JSON.stringify(data, null, 2)}</pre>
-  //       </div>
-  //     );
-  //   }
+
+  // Document reminder mutation
+  const documentReminderMutation = useMutation({
+    mutationFn: () => ethiopiaVisaApi.sendDocumentReminder(id),
+    onMutate: () => {
+      setIsReminderSending(true);
+    },
+    onSuccess: () => {
+      toast.success("Document reminder email sent successfully");
+      setIsReminderSending(false);
+    },
+    onError: () => {
+      toast.error("Failed to send document reminder email");
+      setIsReminderSending(false);
+    },
+  });
+
+  // Payment reminder mutation
+  const paymentReminderMutation = useMutation({
+    mutationFn: () => ethiopiaVisaApi.sendPaymentReminder(id),
+    onMutate: () => {
+      setIsReminderSending(true);
+    },
+    onSuccess: () => {
+      toast.success("Payment reminder email sent successfully");
+      setIsReminderSending(false);
+    },
+    onError: () => {
+      toast.error("Failed to send payment reminder email");
+      setIsReminderSending(false);
+    },
+  });
+
+  // Passport reminder mutation
+  const passportReminderMutation = useMutation({
+    mutationFn: () => ethiopiaVisaApi.sendPassportReminder(id),
+    onMutate: () => {
+      setIsReminderSending(true);
+    },
+    onSuccess: () => {
+      toast.success("Passport reminder email sent successfully");
+      setIsReminderSending(false);
+    },
+    onError: () => {
+      toast.error("Failed to send passport reminder email");
+      setIsReminderSending(false);
+    },
+  });
+
+  // Photo reminder mutation
+  const photoReminderMutation = useMutation({
+    mutationFn: () => ethiopiaVisaApi.sendPhotoReminder(id),
+    onMutate: () => {
+      setIsReminderSending(true);
+    },
+    onSuccess: () => {
+      toast.success("Photo reminder email sent successfully");
+      setIsReminderSending(false);
+    },
+    onError: () => {
+      toast.error("Failed to send photo reminder email");
+      setIsReminderSending(false);
+    },
+  });
+
   return (
     <DashboardLayout>
       <div className="container mx-auto py-6">
@@ -80,10 +145,45 @@ const EthiopiaVisaDetailPage = () => {
                   </CardDescription>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Printer size={16} />
-                    Print
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                        disabled={isReminderSending}
+                      >
+                        <Mail size={16} />
+                        Send Reminder
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => documentReminderMutation.mutate()}
+                        disabled={isReminderSending}
+                      >
+                        Documents Reminder
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => paymentReminderMutation.mutate()}
+                        disabled={isReminderSending}
+                      >
+                        Payment Reminder
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => passportReminderMutation.mutate()}
+                        disabled={isReminderSending}
+                      >
+                        Passport Reminder
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => photoReminderMutation.mutate()}
+                        disabled={isReminderSending}
+                      >
+                        Photo Reminder
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </CardHeader>
             </Card>

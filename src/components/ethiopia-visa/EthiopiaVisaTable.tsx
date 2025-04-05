@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
     ColumnDef,
@@ -14,7 +14,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { ArrowUpDown, ChevronDown, Search, Eye } from 'lucide-react'
+import { ArrowUpDown, ChevronDown, Search, Eye, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -34,6 +34,13 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { VisaApplication } from '@/types/ethiopia-visa'
 import { format } from 'date-fns'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
     const router = useRouter()
@@ -41,6 +48,22 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [globalFilter, setGlobalFilter] = useState('')
+
+    // Extract unique values for filter dropdowns
+    const [uniquePaymentStatuses, setUniquePaymentStatuses] = useState<string[]>([])
+    const [uniqueApplicationStatuses, setUniqueApplicationStatuses] = useState<string[]>([])
+    const [uniqueLastExitUrls, setUniqueLastExitUrls] = useState<string[]>([])
+
+    useEffect(() => {
+        // Extract unique values for filter dropdowns
+        const paymentStatuses = Array.from(new Set(data.map(item => item.paymentStatus))).filter(Boolean) as string[]
+        const applicationStatuses = Array.from(new Set(data.map(item => item.applicationStatus))).filter(Boolean) as string[]
+        const lastExitUrls = Array.from(new Set(data.map(item => item.lastExitUrl))).filter(Boolean) as string[]
+
+        setUniquePaymentStatuses(paymentStatuses)
+        setUniqueApplicationStatuses(applicationStatuses)
+        setUniqueLastExitUrls(lastExitUrls)
+    }, [data])
 
     const columns: ColumnDef<VisaApplication>[] = [
         {
@@ -81,21 +104,21 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
                 )
             },
         },
-        {
-            accessorKey: 'personalInfo.phoneNumber',
-            header: ({ column }) => {
-                return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                    >
-                        Phone Number
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                )
-            },
-            cell: ({ row }) => <div>{row.original.personalInfo?.phoneNumber}</div>,
-        },
+        // {
+        //     accessorKey: 'personalInfo.phoneNumber',
+        //     header: ({ column }) => {
+        //         return (
+        //             <Button
+        //                 variant="ghost"
+        //                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        //             >
+        //                 Phone Number
+        //                 <ArrowUpDown className="ml-2 h-4 w-4" />
+        //             </Button>
+        //         )
+        //     },
+        //     cell: ({ row }) => <div>{row.original.personalInfo?.phoneNumber}</div>,
+        // },
         {
             accessorKey: 'noOfVisa',
             header: ({ column }) => {
@@ -125,21 +148,21 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
             },
             cell: ({ row }) => <div>{row.original.visaDetails?.visaType}</div>,
         },
-        {
-            accessorKey: 'visaDetails.visaValidity',
-            header: ({ column }) => {
-                return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                    >
-                        Visa Validity
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                )
-            },
-            cell: ({ row }) => <div>{row.original.visaDetails?.visaValidity}</div>,
-        },
+        // {
+        //     accessorKey: 'visaDetails.visaValidity',
+        //     header: ({ column }) => {
+        //         return (
+        //             <Button
+        //                 variant="ghost"
+        //                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        //             >
+        //                 Visa Validity
+        //                 <ArrowUpDown className="ml-2 h-4 w-4" />
+        //             </Button>
+        //         )
+        //     },
+        //     cell: ({ row }) => <div>{row.original.visaDetails?.visaValidity}</div>,
+        // },
         {
             accessorKey: 'visaDetails.visaFee',
             header: ({ column }) => {
@@ -159,13 +182,37 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
             accessorKey: 'applicationStatus',
             header: ({ column }) => {
                 return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                    >
-                        Status
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
+                    <div className="space-y-1">
+                        <Button
+                            variant="ghost"
+                            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                            className="w-full justify-between"
+                        >
+                            Status
+                            <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                        <Select
+                            onValueChange={(value) => {
+                                if (value === "all") {
+                                    // Clear filter if "All" is selected
+                                    table.getColumn('applicationStatus')?.setFilterValue(undefined)
+                                } else {
+                                    table.getColumn('applicationStatus')?.setFilterValue(value)
+                                }
+                            }}
+                            value={(table.getColumn('applicationStatus')?.getFilterValue() as string) || "all"}
+                        >
+                            <SelectTrigger className="h-8 w-full">
+                                <SelectValue placeholder="All" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All</SelectItem>
+                                {uniqueApplicationStatuses.map((status) => (
+                                    <SelectItem key={status} value={status}>{status}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 )
             },
             cell: ({ row }) => {
@@ -174,11 +221,10 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
                     <Badge variant={
                         status === 'submitted' ? 'default' :
                             status === 'incomplete' ? 'destructive' :
-                                status === 'processing' ? 'outline' : 'outline'  // Changed from 'warning' to 'outline'
+                                status === 'processing' ? 'outline' : 'outline'
                     }>
                         {status}
                     </Badge>
-
                 )
             },
         },
@@ -186,13 +232,36 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
             accessorKey: 'paymentStatus',
             header: ({ column }) => {
                 return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                    >
-                        Payment Status
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
+                    <div className="space-y-1">
+                        <Button
+                            variant="ghost"
+                            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                            className="w-full justify-between"
+                        >
+                            Payment Status
+                            <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                        <Select
+                            onValueChange={(value) => {
+                                if (value === "all") {
+                                    table.getColumn('paymentStatus')?.setFilterValue(undefined)
+                                } else {
+                                    table.getColumn('paymentStatus')?.setFilterValue(value)
+                                }
+                            }}
+                            value={(table.getColumn('paymentStatus')?.getFilterValue() as string) || "all"}
+                        >
+                            <SelectTrigger className="h-8 w-full">
+                                <SelectValue placeholder="All" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All</SelectItem>
+                                {uniquePaymentStatuses.map((status) => (
+                                    <SelectItem key={status} value={status}>{status}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 )
             },
             cell: ({ row }) => {
@@ -201,12 +270,51 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
                     <Badge variant={
                         status === 'paid' ? 'default' :
                             status === 'pending' ? 'destructive' :
-                                status === 'failed' ? 'outline' : 'outline'  // Changed from 'warning' to 'outline'
+                                status === 'failed' ? 'outline' : 'outline'
                     }>
                         {status}
                     </Badge>
-
                 )
+            },
+        },
+        {
+            accessorKey: 'lastExitUrl',
+            header: ({ column }) => {
+                return (
+                    <div className="space-y-1">
+                        <Button
+                            variant="ghost"
+                            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                            className="w-full justify-between"
+                        >
+                            LastExitUrl
+                            <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                        <Select
+                            onValueChange={(value) => {
+                                if (value === "all") {
+                                    table.getColumn('lastExitUrl')?.setFilterValue(undefined)
+                                } else {
+                                    table.getColumn('lastExitUrl')?.setFilterValue(value)
+                                }
+                            }}
+                            value={(table.getColumn('lastExitUrl')?.getFilterValue() as string) || "all"}
+                        >
+                            <SelectTrigger className="h-8 w-full">
+                                <SelectValue placeholder="All" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All</SelectItem>
+                                {uniqueLastExitUrls.map((url) => (
+                                    <SelectItem key={url} value={url}>{url}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                )
+            },
+            cell: ({ row }) => {
+                return <div>{row.original.lastExitUrl}</div>
             },
         },
         {
@@ -262,6 +370,30 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
         },
     })
 
+    // Function to get active filters for display
+    const getActiveFilters = () => {
+        const filters = []
+
+        const applicationStatusFilter = table.getColumn('applicationStatus')?.getFilterValue() as string
+        if (applicationStatusFilter) {
+            filters.push({ column: 'Application Status', value: applicationStatusFilter })
+        }
+
+        const paymentStatusFilter = table.getColumn('paymentStatus')?.getFilterValue() as string
+        if (paymentStatusFilter) {
+            filters.push({ column: 'Payment Status', value: paymentStatusFilter })
+        }
+
+        const lastExitUrlFilter = table.getColumn('lastExitUrl')?.getFilterValue() as string
+        if (lastExitUrlFilter) {
+            filters.push({ column: 'Last Exit URL', value: lastExitUrlFilter })
+        }
+
+        return filters
+    }
+
+    const activeFilters = getActiveFilters()
+
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -301,6 +433,43 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
+
+            {/* Active Filters Display */}
+            {activeFilters.length > 0 && (
+                <div className="flex flex-wrap gap-2 items-center">
+                    <span className="text-sm font-medium">Active Filters:</span>
+                    {activeFilters.map((filter, index) => (
+                        <Badge key={index} variant="outline" className="px-2 py-1 flex items-center gap-1">
+                            <span>{filter.column}: {filter.value}</span>
+                            <X
+                                className="h-3 w-3 cursor-pointer"
+                                onClick={() => {
+                                    if (filter.column === 'Application Status') {
+                                        table.getColumn('applicationStatus')?.setFilterValue(undefined)
+                                    } else if (filter.column === 'Payment Status') {
+                                        table.getColumn('paymentStatus')?.setFilterValue(undefined)
+                                    } else if (filter.column === 'Last Exit URL') {
+                                        table.getColumn('lastExitUrl')?.setFilterValue(undefined)
+                                    }
+                                }}
+                            />
+                        </Badge>
+                    ))}
+                    <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                            table.getColumn('applicationStatus')?.setFilterValue(undefined)
+                            table.getColumn('paymentStatus')?.setFilterValue(undefined)
+                            table.getColumn('lastExitUrl')?.setFilterValue(undefined)
+                        }}
+                        className="h-7 text-xs cursor-pointer"
+                    >
+                        Clear All
+                    </Button>
+                </div>
+            )}
+
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
