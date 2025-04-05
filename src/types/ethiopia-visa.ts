@@ -125,6 +125,10 @@ export interface VisaApplication {
     emailAddress: string;
     lastExitUrl: string;
     paymentStatus: string;
+    paymentId: string;
+    paymentDate: string;
+    paymentAmount: number;
+    paymentMethod: string;
     applicationStatus: string;
     noOfVisa: number;
     additionalApplicants: AdditionalApplicant[];

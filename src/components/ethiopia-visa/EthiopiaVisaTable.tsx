@@ -83,7 +83,17 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
         },
         {
             accessorKey: 'personalInfo.phoneNumber',
-            header: 'Phone Number',
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                    >
+                        Phone Number
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
             cell: ({ row }) => <div>{row.original.personalInfo?.phoneNumber}</div>,
         },
         {
@@ -102,12 +112,32 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
         },
         {
             accessorKey: 'visaDetails.visaType',
-            header: 'Visa Type',
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                    >
+                        Visa Type
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
             cell: ({ row }) => <div>{row.original.visaDetails?.visaType}</div>,
         },
         {
             accessorKey: 'visaDetails.visaValidity',
-            header: 'Duration',
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                    >
+                        Visa Validity
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
             cell: ({ row }) => <div>{row.original.visaDetails?.visaValidity}</div>,
         },
         {
@@ -127,14 +157,51 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
         },
         {
             accessorKey: 'applicationStatus',
-            header: 'Status',
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                    >
+                        Status
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
             cell: ({ row }) => {
                 const status = row.getValue('applicationStatus') as string
                 return (
                     <Badge variant={
-                        status === 'approved' ? 'secondary' :
-                            status === 'rejected' ? 'destructive' :
-                                status === 'processing' ? 'outline' : 'default'  // Changed from 'warning' to 'outline'
+                        status === 'submitted' ? 'default' :
+                            status === 'incomplete' ? 'destructive' :
+                                status === 'processing' ? 'outline' : 'outline'  // Changed from 'warning' to 'outline'
+                    }>
+                        {status}
+                    </Badge>
+
+                )
+            },
+        },
+        {
+            accessorKey: 'paymentStatus',
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                    >
+                        Payment Status
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
+            cell: ({ row }) => {
+                const status = row.getValue('paymentStatus') as string
+                return (
+                    <Badge variant={
+                        status === 'paid' ? 'default' :
+                            status === 'pending' ? 'destructive' :
+                                status === 'failed' ? 'outline' : 'outline'  // Changed from 'warning' to 'outline'
                     }>
                         {status}
                     </Badge>
@@ -164,8 +231,9 @@ export function EthiopiaVisaTable({ data }: { data: VisaApplication[] }) {
             cell: ({ row }) => {
                 return (
                     <Button
-                        variant="ghost"
+                        variant="secondary"
                         size="sm"
+                        className="cursor-pointer"
                         onClick={() => router.push(`/ethiopia-visa/${row.original.id}`)}
                     >
                         <Eye className="h-4 w-4 mr-2" />

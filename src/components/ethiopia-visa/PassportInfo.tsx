@@ -17,8 +17,8 @@ interface PassportInfoCardProps {
 }
 
 export function PassportInfoCard({ passportInfo }: PassportInfoCardProps) {
-    const issueDate = new Date(passportInfo.passportIssueDate);
-    const expiryDate = new Date(passportInfo.passportExpiryDate);
+    const issueDate = new Date(passportInfo?.passportIssueDate);
+    const expiryDate = new Date(passportInfo?.passportExpiryDate);
 
     return (
         <Card>
@@ -32,11 +32,11 @@ export function PassportInfoCard({ passportInfo }: PassportInfoCardProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium text-muted-foreground">Passport Type</p>
-                        <p className="font-medium">{passportInfo.passportType}</p>
+                        <p className="font-medium">{passportInfo?.passportType}</p>
                     </div>
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium text-muted-foreground">Passport Number</p>
-                        <p className="font-medium">{passportInfo.passportNumber}</p>
+                        <p className="font-medium">{passportInfo?.passportNumber}</p>
                     </div>
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium text-muted-foreground">Issue Date</p>
@@ -56,12 +56,12 @@ export function PassportInfoCard({ passportInfo }: PassportInfoCardProps) {
                         <p className="text-sm font-medium text-muted-foreground">Issuing Country</p>
                         <p className="font-medium flex items-center gap-1">
                             <Flag className="h-4 w-4" />
-                            {passportInfo.passportIssuingCountry}
+                            {passportInfo?.passportIssuingCountry}
                         </p>
                     </div>
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium text-muted-foreground">Issuing Authority</p>
-                        <p className="font-medium">{passportInfo.passportIssuingAuthority}</p>
+                        <p className="font-medium">{passportInfo?.passportIssuingAuthority}</p>
                     </div>
                 </div>
             </CardContent>
