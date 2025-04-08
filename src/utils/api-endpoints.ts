@@ -1,26 +1,30 @@
-import apiClient from "./api-client";
+import apiClient from './api-client';
 
 // Admin authentication endpoints
 export const adminApi = {
   login: (email: string, password: string) =>
-    apiClient.post("/adminD/login", { email, password }),
+    apiClient.post('/adminD/login', { email, password }),
 
   getProfile: (id: string) => apiClient.get(`/adminD/profile/${id}`),
 
   updateProfile: (id: string, data: unknown) =>
     apiClient.put(`/adminD/profile/${id}`, data),
 
-  registerAdmin: (data: unknown) => apiClient.post("/adminD/register", data),
+  registerAdmin: (data: unknown) => apiClient.post('/adminD/register', data),
 
   deleteAdmin: (id: string) => apiClient.delete(`/adminD/${id}`),
 };
 
 export const ethiopiaVisaApi = {
-  getAllApplications: () => apiClient.get("/ethiopia-visa/all"),
+  getAllApplications: () => apiClient.get('/ethiopia-visa/all'),
   getApplicationById: (id: string) => apiClient.get(`/ethiopia-visa/${id}`),
-  getVisaTypes: () => apiClient.get("/ethiopia-visa/visa-types/prices"),
+  getVisaTypes: () => apiClient.get('/ethiopia-visa/visa-types/prices'),
   // Add these new endpoints
-  getGovRefDetails: (applicationId: string, applicantType: string, additionalApplicantIndex?: number | null) => {
+  getGovRefDetails: (
+    applicationId: string,
+    applicantType: string,
+    additionalApplicantIndex?: number | null
+  ) => {
     let endpoint = `/ethiopia-visa/gov-ref/${applicationId}/${applicantType}`;
     if (applicantType === 'additional' && additionalApplicantIndex !== null) {
       endpoint += `/${additionalApplicantIndex}`;
@@ -35,7 +39,11 @@ export const ethiopiaVisaApi = {
     applicantType: 'primary' | 'additional';
     additionalApplicantIndex: number | null;
   }) => apiClient.post('/ethiopia-visa/gov-ref/create', data),
-  deleteGovRefDetails: (applicationId: string, applicantType: string, additionalApplicantIndex?: number | null) => {
+  deleteGovRefDetails: (
+    applicationId: string,
+    applicantType: string,
+    additionalApplicantIndex?: number | null
+  ) => {
     let endpoint = `/ethiopia-visa/gov-ref/${applicationId}/${applicantType}`;
     if (applicantType === 'additional' && additionalApplicantIndex !== null) {
       endpoint += `/${additionalApplicantIndex}`;
@@ -53,6 +61,29 @@ export const ethiopiaVisaApi = {
     apiClient.post(`/mail/photo-reminder/${applicationId}`),
   sendApplicationConfirmation: (applicationId: string) =>
     apiClient.post(`/mail/application-confirmation/${applicationId}`),
-  sendSpecificDocumentsReminder: (applicationId: string, data: { documentType: string }) =>
+  sendSpecificDocumentsReminder: (
+    applicationId: string,
+    data: { documentType: string }
+  ) =>
     apiClient.post(`/mail/specific-documents-reminder/${applicationId}`, data),
+};
+
+export const indianVisaApi = {
+  getAllApplications: async () => {
+    return apiClient.get('/india-visa/applications');
+  },
+  getApplicationById: async (id: string) => {
+    return apiClient.get(`/india-visa/applications/${id}`);
+  },
+  sendDocumentReminder: async (id: string) => {
+    return apiClient.post(`/india-visa/applications/${id}/remind/documents`);
+  },
+  sendPaymentReminder: async (id: string) => {
+    return apiClient.post(`/india-visa/applications/${id}/remind/payment`);
+  },
+  updateApplicationStatus: async (id: string, status: string) => {
+    return apiClient.put(`/india-visa/applications/${id}/status`, {
+      status,
+    });
+  },
 };

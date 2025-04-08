@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = 'https://visa-backend-v2.vercel.app/api/v1/';
-// const BASE_URL = "http://localhost:8090/api/v1/";
+// const BASE_URL = 'http://localhost:8090/api/v1/';
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
