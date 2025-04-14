@@ -86,4 +86,11 @@ export const indianVisaApi = {
       status,
     });
   },
+  sendReminderEmails: async (emailTypes?: {
+    incomplete?: boolean;
+    pendingDocument?: boolean;
+    holdOn?: boolean;
+  }) => {
+    return apiClient.post('/india-visa/send-reminder-emails', { emailTypes });
+  },
 };
