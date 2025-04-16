@@ -105,6 +105,7 @@ export interface AdditionalApplicant {
     passportInfo: PassportInfo;
     _id: string;
     documents: Documents;
+    govRefDetails: GovRefDetails;
     id: string;
 }
 export interface GovRefDetails {
