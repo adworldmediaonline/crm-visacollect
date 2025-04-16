@@ -6,12 +6,10 @@ import { GovRefDetailsForm } from '@/components/kenya-visa/GovRefDetailsForm';
 
 interface ApplicantGovRefDetailsProps {
   visaApplication: VisaApplication;
-  onSuccess?: () => void;
 }
 
 export function ApplicantGovRefDetails({
   visaApplication,
-  onSuccess,
 }: ApplicantGovRefDetailsProps) {
   const { personalInfo, additionalApplicants } = visaApplication;
   const [activeTab, setActiveTab] = useState('primary');
@@ -48,7 +46,6 @@ export function ApplicantGovRefDetails({
         <GovRefDetailsForm
           applicationId={visaApplication._id}
           applicantType="primary"
-          onSuccess={onSuccess}
           visaApplication={visaApplication}
         />
       </TabsContent>
@@ -63,7 +60,6 @@ export function ApplicantGovRefDetails({
             applicationId={visaApplication._id}
             applicantType="additional"
             additionalApplicantIndex={index}
-            onSuccess={onSuccess}
             visaApplication={visaApplication}
           />
         </TabsContent>

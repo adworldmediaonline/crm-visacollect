@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ApplicantDetails } from '@/components/kenya-visa/AdditionalApplicants';
 import { UserCircle, User } from 'lucide-react';
 import { GovRefDetailsForm } from '@/components/kenya-visa/GovRefDetailsForm';
-import { toast } from 'sonner';
 
 interface ApplicantTabsProps {
   visaApplication: VisaApplication;
@@ -14,12 +13,6 @@ export function ApplicantTabs({ visaApplication }: ApplicantTabsProps) {
   const { personalInfo, passportInfo, documents, additionalApplicants, applicationStatus } =
     visaApplication;
   const [activeTab, setActiveTab] = useState('primary');
-  // const [refreshKey, setRefreshKey] = useState(0);
-
-  const handleGovRefSuccess = () => {
-    toast.success('Government reference details updated successfully!');
-    // setRefreshKey(prev => prev + 1);
-  };
 
   return (
     <>
@@ -53,7 +46,6 @@ export function ApplicantTabs({ visaApplication }: ApplicantTabsProps) {
               <GovRefDetailsForm
                 applicationId={visaApplication._id}
                 applicantType="primary"
-                onSuccess={handleGovRefSuccess}
                 visaApplication={visaApplication}
               />
             </div>
@@ -80,7 +72,6 @@ export function ApplicantTabs({ visaApplication }: ApplicantTabsProps) {
                   applicationId={visaApplication._id}
                   applicantType="additional"
                   additionalApplicantIndex={index}
-                  onSuccess={handleGovRefSuccess}
                   visaApplication={visaApplication}
                 />
               </div>
