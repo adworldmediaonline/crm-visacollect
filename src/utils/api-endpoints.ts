@@ -68,6 +68,59 @@ export const ethiopiaVisaApi = {
     apiClient.post(`/mail/specific-documents-reminder/${applicationId}`, data),
 };
 
+export const kenyaVisaApi = {
+  getAllApplications: () => apiClient.get('/kenya-visa/all'),
+  getApplicationById: (id: string) => apiClient.get(`/kenya-visa/${id}`),
+  getVisaTypes: () => apiClient.get('/kenya-visa/visa-types/prices'),
+  // Add these new endpoints
+  getGovRefDetails: (
+    applicationId: string,
+    applicantType: string,
+    additionalApplicantIndex?: number | null
+  ) => {
+    let endpoint = `/kenya-visa/gov-ref/${applicationId}/${applicantType}`;
+    if (applicantType === 'additional' && additionalApplicantIndex !== null) {
+      endpoint += `/${additionalApplicantIndex}`;
+    }
+    return apiClient.get(endpoint);
+  },
+  createOrUpdateGovRefDetails: (data: {
+    applicationId: string;
+    govRefEmail: string;
+    govRefNumber: string;
+    comment: string;
+    applicantType: 'primary' | 'additional';
+    additionalApplicantIndex: number | null;
+  }) => apiClient.post('/kenya-visa/gov-ref/create', data),
+  deleteGovRefDetails: (
+    applicationId: string,
+    applicantType: string,
+    additionalApplicantIndex?: number | null
+  ) => {
+    let endpoint = `/kenya-visa/gov-ref/${applicationId}/${applicantType}`;
+    if (applicantType === 'additional' && additionalApplicantIndex !== null) {
+      endpoint += `/${additionalApplicantIndex}`;
+    }
+    return apiClient.delete(endpoint);
+  },
+  // Email reminder endpoints
+  sendDocumentReminder: (applicationId: string) =>
+    apiClient.post(`/kenya-visa/mail/documents-reminder/${applicationId}`),
+  sendPaymentReminder: (applicationId: string) =>
+    apiClient.post(`/kenya-visa/mail/payment-reminder/${applicationId}`),
+  sendPassportReminder: (applicationId: string) =>
+    apiClient.post(`/kenya-visa/mail/passport-reminder/${applicationId}`),
+  sendPhotoReminder: (applicationId: string) =>
+    apiClient.post(`/kenya-visa/mail/photo-reminder/${applicationId}`),
+  sendApplicationConfirmation: (applicationId: string) =>
+    apiClient.post(`/kenya-visa/mail/application-confirmation/${applicationId}`),
+  sendSpecificDocumentsReminder: (
+    applicationId: string,
+    data: { documentType: string }
+  ) =>
+    apiClient.post(`/kenya-visa/mail/specific-documents-reminder/${applicationId}`, data),
+};
+
 export const indianVisaApi = {
   getAllApplications: async () => {
     return apiClient.get('/india-visa/applications');
