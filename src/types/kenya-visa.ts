@@ -25,6 +25,7 @@ export interface VisaApplication {
 }
 
 export interface AdditionalApplicant {
+    govRefDetails: GovRefDetails;
     _id: string;
     id: string;
     personalInfo: PersonalInfo;

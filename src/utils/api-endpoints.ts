@@ -50,6 +50,10 @@ export const ethiopiaVisaApi = {
     }
     return apiClient.delete(endpoint);
   },
+  updateApplicationStatus: (id: string, status: string) =>
+    apiClient.put(`/ethiopia-visa/${id}`, {
+      applicationStatus: status
+    }),
   // Email reminder endpoints
   sendDocumentReminder: (applicationId: string) =>
     apiClient.post(`/mail/documents-reminder/${applicationId}`),
@@ -102,6 +106,11 @@ export const kenyaVisaApi = {
       endpoint += `/${additionalApplicantIndex}`;
     }
     return apiClient.delete(endpoint);
+  },
+  updateApplicationStatus: async (id: string, status: string) => {
+    return apiClient.put(`/kenya-visa/${id}`, {
+      applicationStatus: status
+    });
   },
   // Email reminder endpoints
   sendDocumentReminder: (applicationId: string) =>

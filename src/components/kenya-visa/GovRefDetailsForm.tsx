@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { kenyaVisaApi } from '@/utils/api-endpoints';
 import { GovRefDetails, VisaApplication } from '@/types/kenya-visa';
 
@@ -14,7 +14,6 @@ interface GovRefDetailsFormProps {
   visaApplication?: VisaApplication;
   applicantType: 'primary' | 'additional';
   additionalApplicantIndex?: number | null;
-  onSuccess?: () => void;
 }
 
 export function GovRefDetailsForm({
@@ -22,14 +21,38 @@ export function GovRefDetailsForm({
   visaApplication,
   applicantType,
   additionalApplicantIndex = null,
-  onSuccess,
 }: GovRefDetailsFormProps) {
-  // Initialize form data from existing govRefDetails if available
-  const initialData = visaApplication?.govRefDetails || {
+  // Initialize form data based on applicant type
+  let initialData = {
     govRefEmail: '',
     govRefNumber: '',
     comment: '',
   };
+  const queryClient = useQueryClient();
+
+  if (visaApplication) {
+    if (applicantType === 'primary' && visaApplication.govRefDetails) {
+      // For primary applicant, use the main govRefDetails
+      initialData = {
+        govRefEmail: visaApplication.govRefDetails.govRefEmail || '',
+        govRefNumber: visaApplication.govRefDetails.govRefNumber || '',
+        comment: visaApplication.govRefDetails.comment || '',
+      };
+    } else if (
+      applicantType === 'additional' &&
+      additionalApplicantIndex !== null &&
+      visaApplication.additionalApplicants &&
+      visaApplication.additionalApplicants[additionalApplicantIndex]?.govRefDetails
+    ) {
+      // For additional applicant, use the govRefDetails from the specific additional applicant
+      const additionalApplicantGovRef = visaApplication.additionalApplicants[additionalApplicantIndex].govRefDetails;
+      initialData = {
+        govRefEmail: additionalApplicantGovRef.govRefEmail || '',
+        govRefNumber: additionalApplicantGovRef.govRefNumber || '',
+        comment: additionalApplicantGovRef.comment || '',
+      };
+    }
+  }
 
   const [formData, setFormData] = useState<
     Omit<
@@ -42,11 +65,7 @@ export function GovRefDetailsForm({
       | 'updatedAt'
       | '__v'
     >
-  >({
-    govRefEmail: initialData.govRefEmail || '',
-    govRefNumber: initialData.govRefNumber || '',
-    comment: initialData.comment || '',
-  });
+  >(initialData);
 
   // Mutation to update gov ref details
   const { mutate, isPending } = useMutation({
@@ -59,10 +78,8 @@ export function GovRefDetailsForm({
       additionalApplicantIndex: number | null;
     }) => kenyaVisaApi.createOrUpdateGovRefDetails(data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['KenyaVisaApplication', applicationId] });
       toast.success('Government reference details updated successfully');
-      if (onSuccess) {
-        onSuccess();
-      }
     },
     onError: error => {
       console.error('Error updating government reference details:', error);
@@ -102,7 +119,11 @@ export function GovRefDetailsForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Government Reference Details</CardTitle>
+        <CardTitle>
+          {applicantType === 'primary'
+            ? 'Government Reference Details'
+            : `Government Reference Details - Additional Applicant ${additionalApplicantIndex !== null ? additionalApplicantIndex + 1 : ''}`}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

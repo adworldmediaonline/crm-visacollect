@@ -3,6 +3,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CalendarClock, CreditCard, Check, Clock, DollarSign, CreditCard as CreditCardIcon, Hash } from 'lucide-react';
 import { format } from 'date-fns';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { kenyaVisaApi } from '@/utils/api-endpoints';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface ApplicationStatusCardProps {
   visaApplication: VisaApplication;
@@ -24,7 +34,45 @@ export function ApplicationStatusCard({
     isComplete,
   } = visaApplication;
 
+  const [status, setStatus] = useState(applicationStatus);
+  const [isUpdating, setIsUpdating] = useState(false);
+
   const createdDate = new Date(createdAt);
+
+  const statusOptions = [
+    "incomplete",
+    "submitted",
+    "pending document",
+    "on hold",
+    "pending",
+    "form filled",
+    "processed",
+    "future processing",
+    "visa granted",
+    "visa email sent",
+    "escalated",
+    "visa declined",
+    "refund pending",
+    "refund completed",
+    "payment disputed",
+    "miscellaneous",
+    "not interested",
+    "chargeback",
+  ];
+
+  const handleStatusChange = async (newStatus: string) => {
+    try {
+      setIsUpdating(true);
+      await kenyaVisaApi.updateApplicationStatus(_id, newStatus);
+      setStatus(newStatus);
+      toast.success("Application status updated successfully");
+    } catch (error) {
+      toast.error("Failed to update application status");
+      console.error("Error updating status:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   return (
     <Card>
@@ -33,19 +81,6 @@ export function ApplicationStatusCard({
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <h2 className="text-lg font-bold">Application ID: {_id}</h2>
-              <Badge
-                variant={
-                  applicationStatus === 'submitted' ? 'default' : 'outline'
-                }
-              >
-                {applicationStatus === 'submitted' ? (
-                  <Check className="mr-1 h-3 w-3" />
-                ) : (
-                  <Clock className="mr-1 h-3 w-3" />
-                )}
-                {applicationStatus?.charAt(0).toUpperCase() +
-                  applicationStatus.slice(1)}
-              </Badge>
             </div>
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
@@ -57,30 +92,52 @@ export function ApplicationStatusCard({
           </div>
 
           <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <Badge
-                variant={paymentStatus === 'paid' ? 'secondary' : 'destructive'}
+            <div className="flex flex-col gap-1">
+              <label htmlFor="status-select" className="text-sm font-medium">
+                Application Status
+              </label>
+              <Select
+                value={status}
+                onValueChange={handleStatusChange}
+                disabled={isUpdating}
               >
-                <CreditCard className="mr-1 h-3 w-3" />
-                Payment:{' '}
-                {paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1)}
-              </Badge>
-
-              <Badge variant={isComplete ? 'secondary' : 'destructive'}>
-                {isComplete ? (
-                  <>
-                    <Check className="mr-1 h-3 w-3" />
-                    Complete
-                  </>
-                ) : (
-                  <>
-                    <Clock className="mr-1 h-3 w-3" />
-                    Incomplete
-                  </>
-                )}
-              </Badge>
+                <SelectTrigger id="status-select" className="w-[200px]">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {statusOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option.charAt(0).toUpperCase() + option.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+          </div>
 
+          <Badge
+            variant={paymentStatus === 'paid' ? 'secondary' : 'destructive'}
+          >
+            <CreditCard className="mr-1 h-3 w-3" />
+            Payment:{' '}
+            {paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1)}
+          </Badge>
+
+          <Badge variant={isComplete ? 'secondary' : 'destructive'}>
+            {isComplete ? (
+              <>
+                <Check className="mr-1 h-3 w-3" />
+                Complete
+              </>
+            ) : (
+              <>
+                <Clock className="mr-1 h-3 w-3" />
+                Incomplete
+              </>
+            )}
+          </Badge>
+
+          <div className="flex flex-col gap-2">
             {paymentStatus === 'paid' && (
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <Badge variant="outline" className="text-xs">
