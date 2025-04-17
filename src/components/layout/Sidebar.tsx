@@ -89,6 +89,12 @@ export default function Sidebar({ collapsed, isMobile }: SidebarProps) {
           label="All Kenya Visa"
           collapsed={collapsed}
         />
+        <SidebarItem
+          href="/egypt-visa"
+          icon={<Users size={20} />}
+          label="All Egypt Visa"
+          collapsed={collapsed}
+        />
       </nav>
     </aside>
   );
