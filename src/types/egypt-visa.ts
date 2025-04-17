@@ -73,7 +73,7 @@ export interface VisaDetails {
     visaType: string;
     visaValidity: string;
     visaFee: number;
-    attachments: any[];
+    attachments: Attachment[];
     createdAt: string;
     updatedAt: string;
     __v: number;
