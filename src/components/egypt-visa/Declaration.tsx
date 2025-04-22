@@ -72,6 +72,42 @@ export const DeclarationCard: React.FC<DeclarationCardProps> = ({ declaration })
                         <p className="text-sm font-medium">Trip Financed By:</p>
                         <p className="text-sm">{declaration.whoIsPaying}</p>
                     </div>
+
+                    {/* Host Information Section */}
+                    {declaration.hostType && (
+                        <div>
+                            <p className="text-sm font-medium">Host Type:</p>
+                            <p className="text-sm">{declaration.hostType}</p>
+                        </div>
+                    )}
+
+                    {declaration.hostName && (
+                        <div>
+                            <p className="text-sm font-medium">Host Name:</p>
+                            <p className="text-sm">{declaration.hostName}</p>
+                        </div>
+                    )}
+
+                    {declaration.hostPhoneNumber && (
+                        <div>
+                            <p className="text-sm font-medium">Host Phone Number:</p>
+                            <p className="text-sm">{declaration.hostPhoneNumber}</p>
+                        </div>
+                    )}
+
+                    {declaration.hostEmail && (
+                        <div>
+                            <p className="text-sm font-medium">Host Email:</p>
+                            <p className="text-sm">{declaration.hostEmail}</p>
+                        </div>
+                    )}
+
+                    {declaration.hostAddress && (
+                        <div>
+                            <p className="text-sm font-medium">Host Address:</p>
+                            <p className="text-sm">{declaration.hostAddress}</p>
+                        </div>
+                    )}
                 </div>
             </CardContent>
         </Card>
