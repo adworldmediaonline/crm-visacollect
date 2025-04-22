@@ -109,6 +109,11 @@ export interface Declaration {
     whoIsPaying: string;
     createdAt: string;
     updatedAt: string;
+    hostType: string,
+    hostName: string,
+    hostPhoneNumber: string,
+    hostEmail: string,
+    hostAddress: string,
     __v: number;
 }
 
