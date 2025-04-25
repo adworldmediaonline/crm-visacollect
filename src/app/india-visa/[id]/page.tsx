@@ -20,10 +20,14 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function IndianVisaDetailsPage() {
   const params = useParams();
   const applicationId = params.id as string;
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [status, setStatus] = useState<string>('incomplete');
 
   const {
     data: application,
@@ -33,6 +37,7 @@ export default function IndianVisaDetailsPage() {
     queryKey: ['indianVisaApplication', applicationId],
     queryFn: async () => {
       const response = await indianVisaApi.getApplicationById(applicationId);
+      setStatus(response.data.visaStatus);
       return response.data;
     },
     enabled: !!applicationId,
@@ -53,6 +58,41 @@ export default function IndianVisaDetailsPage() {
     } catch (error) {
       console.error(`Error sending ${type} reminder:`, error);
       toast.error(`Failed to send ${type} reminder. Please try again.`);
+    }
+  };
+
+  const statusOptions = [
+    "incomplete",
+    "submitted",
+    "pending document",
+    "on hold",
+    "pending",
+    "form filled",
+    "processed",
+    "future processing",
+    "visa granted",
+    "visa email sent",
+    "escalated",
+    "visa declined",
+    "refund pending",
+    "refund completed",
+    "payment disputed",
+    "miscellaneous",
+    "not interested",
+    "chargeback",
+  ];
+
+  const handleStatusChange = async (newStatus: string) => {
+    try {
+      setIsUpdating(true);
+      await indianVisaApi.updateApplicationStatus(applicationId, newStatus);
+      setStatus(newStatus);
+      toast.success("Application status updated successfully");
+    } catch (error) {
+      toast.error("Failed to update application status");
+      console.error("Error updating status:", error);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -222,6 +262,29 @@ export default function IndianVisaDetailsPage() {
                     <Mail className="h-4 w-4 mr-2" />
                     Send Payment Reminder
                   </Button>
+                </div>
+                <div className="flex flex-col gap-2 mt-3">
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="status-select" className="text-sm font-medium">
+                      Application Status
+                    </label>
+                    <Select
+                      value={status}
+                      onValueChange={handleStatusChange}
+                      disabled={isUpdating}
+                    >
+                      <SelectTrigger id="status-select" className="w-[200px]">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {statusOptions.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option.charAt(0).toUpperCase() + option.slice(1)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </CardContent>
             </Card>
