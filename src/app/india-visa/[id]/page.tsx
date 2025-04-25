@@ -38,9 +38,12 @@ export default function IndianVisaDetailsPage() {
     enabled: !!applicationId,
   });
 
-  const handleSendReminder = async (type: 'documents' | 'payment') => {
+  const handleSendReminder = async (type: 'incomplete' | 'documents' | 'payment') => {
     try {
-      if (type === 'documents') {
+      if (type === 'incomplete') {
+        await indianVisaApi.sendIncompleteReminder(applicationId);
+      }
+      else if (type === 'documents') {
         await indianVisaApi.sendDocumentReminder(applicationId);
       } else if (type === 'payment') {
         await indianVisaApi.sendPaymentReminder(applicationId);
@@ -103,11 +106,11 @@ export default function IndianVisaDetailsPage() {
                         application.visaStatus === 'approved'
                           ? 'outline'
                           : application.visaStatus === 'rejected'
-                          ? 'destructive'
-                          : application.visaStatus === 'pending' ||
-                            application.visaStatus === 'processing'
-                          ? 'default'
-                          : 'outline'
+                            ? 'destructive'
+                            : application.visaStatus === 'pending' ||
+                              application.visaStatus === 'processing'
+                              ? 'default'
+                              : 'outline'
                       }
                     >
                       Status: {application.visaStatus}
@@ -117,8 +120,8 @@ export default function IndianVisaDetailsPage() {
                         application.paymentStatus === 'paid'
                           ? 'outline'
                           : application.paymentStatus === 'failed'
-                          ? 'destructive'
-                          : 'default'
+                            ? 'destructive'
+                            : 'default'
                       }
                     >
                       Payment: {application.paymentStatus}
@@ -195,6 +198,14 @@ export default function IndianVisaDetailsPage() {
                 </div>
 
                 <div className="mt-6 flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSendReminder('incomplete')}
+                  >
+                    <Mail className="h-4 w-4 mr-2" />
+                    Send Incomplete Reminder
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -476,7 +487,7 @@ export default function IndianVisaDetailsPage() {
                             Passport
                           </h3>
                           {application.step6.passport &&
-                          application.step6.passport.length > 0 ? (
+                            application.step6.passport.length > 0 ? (
                             <div className="space-y-2">
                               {application.step6.passport.map(
                                 (doc: string, index: number) => (
@@ -537,8 +548,8 @@ export default function IndianVisaDetailsPage() {
                               application.paymentStatus === 'paid'
                                 ? 'outline'
                                 : application.paymentStatus === 'failed'
-                                ? 'destructive'
-                                : 'default'
+                                  ? 'destructive'
+                                  : 'default'
                             }
                           >
                             {application.paymentStatus}

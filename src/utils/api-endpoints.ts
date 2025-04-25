@@ -195,6 +195,9 @@ export const indianVisaApi = {
   getApplicationById: async (id: string) => {
     return apiClient.get(`/india-visa/applications/${id}`);
   },
+  sendIncompleteReminder: async (id: string) => {
+    return apiClient.post(`/india-visa/applications/${id}/remind/incomplete`);
+  },
   sendDocumentReminder: async (id: string) => {
     return apiClient.post(`/india-visa/applications/${id}/remind/documents`);
   },
