@@ -1,3 +1,4 @@
+import { get } from 'http';
 import apiClient from './api-client';
 
 // Admin authentication endpoints
@@ -216,4 +217,23 @@ export const indianVisaApi = {
   }) => {
     return apiClient.post('/india-visa/send-reminder-emails', { emailTypes });
   },
+
+  createOrUpdateGovRefDetails: async (data: {
+    visaApplicationId: string;
+    govRefEmail: string;
+    govRefNumber: string;
+    comment: string;
+  }) => {
+    return apiClient.post('/india-visa/gov-ref/create', data);
+  },
+
+  getGovRefDetails: async (
+    applicationId: string
+  ) => {
+    return apiClient.get(`/india-visa/gov-ref/${applicationId}`);
+  },
+
+  deleteGovRefDetails: async (applicationId: string) => {
+    return apiClient.delete(`/india-visa/gov-ref/${applicationId}`);
+  }
 };

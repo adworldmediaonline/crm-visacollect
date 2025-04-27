@@ -22,6 +22,7 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { GovRefDetailsForm } from '@/components/india-visa/GovRefDetailsForm';
 
 export default function IndianVisaDetailsPage() {
   const params = useParams();
@@ -288,6 +289,8 @@ export default function IndianVisaDetailsPage() {
                 </div>
               </CardContent>
             </Card>
+
+            <GovRefDetailsForm applicationId={applicationId} visaApplication={application} />
 
             <Tabs defaultValue="personal">
               <TabsList className="grid w-full grid-cols-4">
