@@ -1,4 +1,3 @@
-import { get } from 'http';
 import apiClient from './api-client';
 
 // Admin authentication endpoints
