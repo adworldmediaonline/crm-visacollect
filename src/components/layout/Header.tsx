@@ -22,12 +22,12 @@ import {
 import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
+    isMobile?: boolean;
     toggleSidebar: () => void;
     sidebarCollapsed: boolean;
-    isMobile: boolean;
 }
 
-export default function Header({ toggleSidebar, sidebarCollapsed, isMobile }: HeaderProps) {
+export default function Header({ isMobile, toggleSidebar, sidebarCollapsed }: HeaderProps) {
     const { user, logout } = useAuth();
     const router = useRouter();
 
@@ -39,16 +39,18 @@ export default function Header({ toggleSidebar, sidebarCollapsed, isMobile }: He
     return (
         <header className="bg-gray-200 border-b border-gray-400 h-16 flex items-center px-4 sticky top-0 z-10">
             <div className="flex items-center justify-between w-full">
+
                 <div className="flex items-center">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={toggleSidebar}
-                        className="mr-4"
-                    >
-                        {sidebarCollapsed ? <AlignRight size={20} /> : <AlignLeft size={20} />}
-                    </Button>
-                    {isMobile && <h1 className="text-xl font-bold">VisaCollect CRM</h1>}
+                    {!isMobile && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={toggleSidebar}
+                            className="mr-4"
+                        >
+                            {sidebarCollapsed ? <AlignRight size={20} /> : <AlignLeft size={20} />}
+                        </Button>
+                    )}
                 </div>
 
                 <div className="flex items-center">

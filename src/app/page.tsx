@@ -43,6 +43,9 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(data));
 
+      // Also set a cookie for the middleware to use
+      document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24 * 7}`; // 7 days expiry
+
       // Redirect to dashboard
       router.push("/dashboard");
 
@@ -53,8 +56,6 @@ export default function LoginPage() {
         axiosError.response?.data?.message || "Login failed. Please try again."
       );
       setLoading(false);
-    } finally {
-      // setLoading(false);
     }
   };
 
