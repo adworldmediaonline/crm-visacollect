@@ -9,7 +9,7 @@ import { AlertCircle } from 'lucide-react'
 import { egyptVisaApi } from '@/utils/api-endpoints'
 import { EgpytVisaTable } from '@/components/egypt-visa/EgpytVisaTable'
 
-const KenyaVisaPage = () => {
+const EgyptVisaPage = () => {
     const { data, isLoading, error } = useQuery({
         queryKey: ['egyptVisaApplications'],
         queryFn: async () => {
@@ -23,9 +23,9 @@ const KenyaVisaPage = () => {
             <div className="container mx-auto py-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Kenya Visa Applications</CardTitle>
+                        <CardTitle>Egypt Visa Applications</CardTitle>
                         <CardDescription>
-                            Manage and view all Kenya visa applications
+                            Manage and view all Egypt visa applications
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -55,4 +55,4 @@ const KenyaVisaPage = () => {
     )
 }
 
-export default KenyaVisaPage
+export default EgyptVisaPage
