@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Home, Users } from 'lucide-react';
-import Image from "next/image";
 
 interface SidebarProps {
     collapsed: boolean;
