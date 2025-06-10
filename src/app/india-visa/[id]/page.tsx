@@ -30,6 +30,7 @@ import {
   DollarSign,
 } from 'lucide-react';
 import Link from 'next/link';
+import { CldImage } from 'next-cloudinary';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
@@ -75,7 +76,17 @@ export default function IndianVisaDetailsPage() {
     }
   };
 
-  const formatVisaService = (application: any) => {
+  const formatVisaService = (application: {
+    visaService?: string;
+    eTouristVisa30Days?: string;
+    eTouristVisa1Year?: string;
+    eTouristVisa5Years?: string;
+    eBusinessVisa?: string;
+    eMedicalVisa?: string;
+    eConferenceVisa?: string;
+    eMedicalAttendantVisa?: string;
+    eEmergencyXMisc?: string;
+  }) => {
     let visaDetails = application.visaService || 'Not specified';
 
     // Add sub-visa details based on what's available
@@ -98,6 +109,16 @@ export default function IndianVisaDetailsPage() {
     }
 
     return visaDetails;
+  };
+
+  const getCloudinaryUrl = (publicId: string) => {
+    if (!publicId) return '#';
+    // If it's already a full URL, return as is
+    if (publicId.startsWith('http')) return publicId;
+    // Otherwise, construct Cloudinary URL
+    return `https://res.cloudinary.com/${
+      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'your-cloud-name'
+    }/image/upload/${publicId}`;
   };
 
   console.log(application);
@@ -433,7 +454,7 @@ export default function IndianVisaDetailsPage() {
                 <TabsTrigger value="step4">Step 4</TabsTrigger>
                 <TabsTrigger value="step5">Step 5</TabsTrigger>
                 <TabsTrigger value="step6">Documents</TabsTrigger>
-                <TabsTrigger value="step8">Terms</TabsTrigger>
+                <TabsTrigger value="step8">Terms and Payment</TabsTrigger>
               </TabsList>
               {/* Step 2 - Personal Details */}
               <TabsContent value="step2" className="mt-4">
@@ -1956,10 +1977,13 @@ export default function IndianVisaDetailsPage() {
                                       </h4>
                                     </div>
                                     <div className="overflow-hidden rounded-lg w-32 h-32 mx-auto">
-                                      <img
+                                      <CldImage
                                         src={application.step6.profilePicture}
                                         alt="Profile"
-                                        className="w-full h-full object-cover"
+                                        width={128}
+                                        height={128}
+                                        className="object-cover"
+                                        crop="fill"
                                       />
                                     </div>
                                   </div>
@@ -1994,7 +2018,7 @@ export default function IndianVisaDetailsPage() {
                                                 asChild
                                               >
                                                 <a
-                                                  href={doc}
+                                                  href={getCloudinaryUrl(doc)}
                                                   target="_blank"
                                                   rel="noopener noreferrer"
                                                 >
@@ -2038,7 +2062,7 @@ export default function IndianVisaDetailsPage() {
                                                 asChild
                                               >
                                                 <a
-                                                  href={doc}
+                                                  href={getCloudinaryUrl(doc)}
                                                   target="_blank"
                                                   rel="noopener noreferrer"
                                                 >
@@ -2082,7 +2106,7 @@ export default function IndianVisaDetailsPage() {
                                                 asChild
                                               >
                                                 <a
-                                                  href={doc}
+                                                  href={getCloudinaryUrl(doc)}
                                                   target="_blank"
                                                   rel="noopener noreferrer"
                                                 >
@@ -2202,112 +2226,262 @@ export default function IndianVisaDetailsPage() {
                 </Card>
               </TabsContent>
 
-              {/* Step 8 - Terms & Conditions */}
+              {/* Step 8 - Terms & Payment */}
               <TabsContent value="step8" className="mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Step 8 - Terms & Conditions</CardTitle>
+                    <CardTitle>Terms & Payment Information</CardTitle>
                     <CardDescription>
-                      Terms and conditions agreement
+                      Terms and conditions agreement and payment details
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {application.step8 ? (
-                      <div className="space-y-6">
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-2 mb-4">
-                            <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
-                              <FileText className="h-3 w-3 text-white" />
-                            </div>
-                            <h3 className="text-lg font-bold text-gray-800">
-                              Terms & Conditions
-                            </h3>
+                    <div className="space-y-6">
+                      {/* Terms & Conditions Section */}
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
+                            <FileText className="h-3 w-3 text-white" />
                           </div>
+                          <h3 className="text-lg font-bold text-gray-800">
+                            Terms & Conditions
+                          </h3>
+                        </div>
 
-                          <Card className="border shadow-sm hover:shadow-md transition-all duration-200 bg-gradient-to-br from-blue-50 to-indigo-50">
-                            <CardContent className="p-6">
-                              <div className="space-y-4">
-                                {application.step8.termsAndConditions && (
-                                  <div>
-                                    <h4 className="text-sm font-bold text-gray-800 mb-2">
-                                      Terms & Conditions Content
-                                    </h4>
-                                    <div className="bg-white rounded-lg p-4 max-h-64 overflow-y-auto">
-                                      <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                                        {application.step8.termsAndConditions}
-                                      </p>
-                                    </div>
+                        <Card className="border shadow-sm hover:shadow-md transition-all duration-200 bg-gradient-to-br from-blue-50 to-indigo-50">
+                          <CardContent className="p-6">
+                            <div className="space-y-4">
+                              {application.termsAndConditionsContent && (
+                                <div>
+                                  <h4 className="text-sm font-bold text-gray-800 mb-2">
+                                    Terms & Conditions Content
+                                  </h4>
+                                  <div className="bg-white rounded-lg p-4 max-h-64 overflow-y-auto">
+                                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                                      {application.termsAndConditionsContent}
+                                    </p>
                                   </div>
-                                )}
+                                </div>
+                              )}
 
-                                <div className="flex items-center justify-between p-4 bg-white rounded-lg">
-                                  <div className="flex items-center gap-3">
-                                    <div
-                                      className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                                        application.step8
-                                          .termsAndConditionsAgree
-                                          ? 'bg-green-100'
-                                          : 'bg-red-100'
+                              <div className="flex items-center justify-between p-4 bg-white rounded-lg">
+                                <div className="flex items-center gap-3">
+                                  <div
+                                    className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                                      application.termsAndConditions
+                                        ? 'bg-green-100'
+                                        : 'bg-red-100'
+                                    }`}
+                                  >
+                                    <FileText
+                                      className={`h-5 w-5 ${
+                                        application.termsAndConditions
+                                          ? 'text-green-600'
+                                          : 'text-red-600'
                                       }`}
-                                    >
-                                      <FileText
-                                        className={`h-5 w-5 ${
-                                          application.step8
-                                            .termsAndConditionsAgree
-                                            ? 'text-green-600'
-                                            : 'text-red-600'
-                                        }`}
-                                      />
-                                    </div>
-                                    <div>
-                                      <h4 className="text-lg font-bold text-gray-800">
-                                        Agreement Status
-                                      </h4>
-                                      <p className="text-sm text-gray-600">
-                                        {application.step8
-                                          .termsAndConditionsAgree
-                                          ? 'Applicant has agreed to the terms and conditions'
-                                          : 'Applicant has not agreed to the terms and conditions'}
-                                      </p>
-                                    </div>
+                                    />
                                   </div>
+                                  <div>
+                                    <h4 className="text-lg font-bold text-gray-800">
+                                      Agreement Status
+                                    </h4>
+                                    <p className="text-sm text-gray-600">
+                                      {application.termsAndConditions
+                                        ? 'Applicant has agreed to the terms and conditions'
+                                        : 'Applicant has not agreed to the terms and conditions'}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Badge
+                                  variant={
+                                    application.termsAndConditions
+                                      ? 'outline'
+                                      : 'destructive'
+                                  }
+                                  className="text-lg px-4 py-2"
+                                >
+                                  {application.termsAndConditions
+                                    ? 'Agreed'
+                                    : 'Not Agreed'}
+                                </Badge>
+                              </div>
+
+                              {!application.termsAndConditions && (
+                                <Alert variant="destructive">
+                                  <AlertCircle className="h-4 w-4" />
+                                  <AlertTitle>Terms Not Accepted</AlertTitle>
+                                  <AlertDescription>
+                                    The applicant has not yet agreed to the
+                                    terms and conditions. This may prevent the
+                                    application from proceeding.
+                                  </AlertDescription>
+                                </Alert>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Payment Information Section */}
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-sm">
+                            <DollarSign className="h-3 w-3 text-white" />
+                          </div>
+                          <h3 className="text-lg font-bold text-gray-800">
+                            Payment Information
+                          </h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {/* Payment Status */}
+                          <Card className="border shadow-sm hover:shadow-md transition-all duration-200 bg-white">
+                            <CardContent className="p-4">
+                              <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-lg bg-green-100 flex items-center justify-center">
+                                  <DollarSign className="h-4 w-4 text-green-600" />
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                    Payment Status
+                                  </p>
                                   <Badge
                                     variant={
-                                      application.step8.termsAndConditionsAgree
+                                      application.paymentStatus === 'paid' ||
+                                      application.paid
                                         ? 'outline'
-                                        : 'destructive'
+                                        : application.paymentStatus === 'failed'
+                                        ? 'destructive'
+                                        : 'default'
                                     }
-                                    className="text-lg px-4 py-2"
+                                    className="mt-1"
                                   >
-                                    {application.step8.termsAndConditionsAgree
-                                      ? 'Agreed'
-                                      : 'Not Agreed'}
+                                    {application.paymentStatus ||
+                                      (application.paid ? 'paid' : 'pending')}
                                   </Badge>
                                 </div>
-
-                                {!application.step8.termsAndConditionsAgree && (
-                                  <Alert variant="destructive">
-                                    <AlertCircle className="h-4 w-4" />
-                                    <AlertTitle>Terms Not Accepted</AlertTitle>
-                                    <AlertDescription>
-                                      The applicant has not yet agreed to the
-                                      terms and conditions. This may prevent the
-                                      application from proceeding.
-                                    </AlertDescription>
-                                  </Alert>
-                                )}
                               </div>
                             </CardContent>
                           </Card>
+
+                          {/* Payment Amount */}
+                          <Card className="border shadow-sm hover:shadow-md transition-all duration-200 bg-white">
+                            <CardContent className="p-4">
+                              <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                  <DollarSign className="h-4 w-4 text-blue-600" />
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                    Amount
+                                  </p>
+                                  <p className="text-sm font-bold text-gray-900">
+                                    $
+                                    {application.paymentAmount ||
+                                      application.price ||
+                                      'N/A'}
+                                  </p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          {/* Payment Method */}
+                          {application.paymentMethod && (
+                            <Card className="border shadow-sm hover:shadow-md transition-all duration-200 bg-white">
+                              <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="h-8 w-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                                    <CreditCard className="h-4 w-4 text-purple-600" />
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                      Payment Method
+                                    </p>
+                                    <p className="text-sm font-bold text-gray-900 capitalize">
+                                      {application.paymentMethod}
+                                    </p>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          )}
+
+                          {/* Payment Date */}
+                          {application.paymentDate && (
+                            <Card className="border shadow-sm hover:shadow-md transition-all duration-200 bg-white">
+                              <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="h-8 w-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                                    <Calendar className="h-4 w-4 text-orange-600" />
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                      Payment Date
+                                    </p>
+                                    <p className="text-sm font-bold text-gray-900">
+                                      {formatDate(application.paymentDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          )}
+
+                          {/* Payment ID */}
+                          {application.paymentId && (
+                            <Card className="border shadow-sm hover:shadow-md transition-all duration-200 bg-white">
+                              <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="h-8 w-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                                    <FileText className="h-4 w-4 text-indigo-600" />
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                      Payment ID
+                                    </p>
+                                    <p
+                                      className="text-xs font-bold text-gray-900 truncate"
+                                      title={application.paymentId}
+                                    >
+                                      {application.paymentId}
+                                    </p>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          )}
                         </div>
+
+                        {/* Payment Status Alert */}
+                        {!application.paid &&
+                          application.paymentStatus !== 'paid' && (
+                            <Alert className="mt-4">
+                              <AlertCircle className="h-4 w-4" />
+                              <AlertTitle>Payment Required</AlertTitle>
+                              <AlertDescription>
+                                This application requires payment to proceed.
+                                Consider sending a payment reminder to the
+                                applicant.
+                              </AlertDescription>
+                            </Alert>
+                          )}
+
+                        {(application.paid ||
+                          application.paymentStatus === 'paid') && (
+                          <Alert className="mt-4 border-green-200 bg-green-50">
+                            <DollarSign className="h-4 w-4 text-green-600" />
+                            <AlertTitle className="text-green-800">
+                              Payment Completed
+                            </AlertTitle>
+                            <AlertDescription className="text-green-700">
+                              Payment has been successfully processed for this
+                              application.
+                            </AlertDescription>
+                          </Alert>
+                        )}
                       </div>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-gray-500">
-                          No Step 8 data available
-                        </p>
-                      </div>
-                    )}
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
