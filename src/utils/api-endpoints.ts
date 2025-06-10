@@ -195,6 +195,9 @@ export const indianVisaApi = {
   getApplicationById: async (id: string) => {
     return apiClient.get(`/india-visa/applications/${id}`);
   },
+  sendIncompleteReminder: async (id: string) => {
+    return apiClient.post(`/india-visa/applications/${id}/remind/incomplete`);
+  },
   sendDocumentReminder: async (id: string) => {
     return apiClient.post(`/india-visa/applications/${id}/remind/documents`);
   },
@@ -213,4 +216,23 @@ export const indianVisaApi = {
   }) => {
     return apiClient.post('/india-visa/send-reminder-emails', { emailTypes });
   },
+
+  createOrUpdateGovRefDetails: async (data: {
+    visaApplicationId: string;
+    govRefEmail: string;
+    govRefNumber: string;
+    comment: string;
+  }) => {
+    return apiClient.post('/india-visa/gov-ref/create', data);
+  },
+
+  getGovRefDetails: async (
+    applicationId: string
+  ) => {
+    return apiClient.get(`/india-visa/gov-ref/${applicationId}`);
+  },
+
+  deleteGovRefDetails: async (applicationId: string) => {
+    return apiClient.delete(`/india-visa/gov-ref/${applicationId}`);
+  }
 };

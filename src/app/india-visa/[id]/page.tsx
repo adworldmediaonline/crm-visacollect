@@ -2164,7 +2164,7 @@ export default function IndianVisaDetailsPage() {
                             </CardContent>
                           </Card>
 
-                          {application.paymentDate && (
+                          {/* {application.paymentDate && (
                             <Card className="border shadow-sm hover:shadow-md transition-all duration-200 bg-white">
                               <CardContent className="p-4">
                                 <div className="flex items-center gap-3">
@@ -2182,7 +2182,7 @@ export default function IndianVisaDetailsPage() {
                                 </div>
                               </CardContent>
                             </Card>
-                          )}
+                          )} */}
                         </div>
 
                         {application.paymentStatus !== 'paid' && (

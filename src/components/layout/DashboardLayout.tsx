@@ -1,48 +1,49 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import Sidebar from "./Sidebar";
+import React, { useEffect, useState } from "react";
 import Header from "./Header";
+import Sidebar from "./Sidebar";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-interface DashboardLayoutProps {
-    children: React.ReactNode;
-}
-
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const isMobile = useMediaQuery("(max-width: 768px)");
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
 
+    // Load sidebar state from localStorage on component mount
     useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
+        const savedState = localStorage.getItem("sidebarCollapsed");
+        if (savedState !== null) {
+            setSidebarCollapsed(JSON.parse(savedState));
+        } else {
+            // Default to collapsed on mobile, expanded on desktop
+            setSidebarCollapsed(isMobile);
+        }
+    }, [isMobile]);
 
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
-
+    // Toggle sidebar and save state to localStorage
     const toggleSidebar = () => {
-        setSidebarCollapsed(!sidebarCollapsed);
+        const newState = !sidebarCollapsed;
+        setSidebarCollapsed(newState);
+        localStorage.setItem("sidebarCollapsed", JSON.stringify(newState));
     };
 
     return (
-        <div className="h-screen flex flex-col bg-gray-100">
+        <div className="min-h-screen bg-gray-50">
             <Header
+                isMobile={isMobile}
                 toggleSidebar={toggleSidebar}
                 sidebarCollapsed={sidebarCollapsed}
+            />
+            <Sidebar
+                collapsed={sidebarCollapsed}
                 isMobile={isMobile}
             />
-            <div className="flex flex-1 overflow-hidden">
-                <Sidebar collapsed={sidebarCollapsed} isMobile={isMobile} />
-                <main className={cn(
-                    "flex-1 overflow-auto p-6 transition-all duration-300",
-                    !isMobile && (sidebarCollapsed ? "ml-[80px]" : "ml-[250px]"),
-                )}>
-                    {children}
-                </main>
-            </div>
+            <main
+                className={`transition-all duration-300 ${sidebarCollapsed ? "ml-[80px]" : "ml-[250px]"
+                    } ${isMobile ? "ml-[80px]" : ""}`}
+            >
+                <div className="p-6">{children}</div>
+            </main>
         </div>
     );
 }
