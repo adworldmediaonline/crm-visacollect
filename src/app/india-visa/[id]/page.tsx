@@ -22,7 +22,6 @@ import {
   FileText,
   Globe,
   CreditCard,
-  Calendar,
   Phone,
   MapPin,
   Plane,
@@ -57,7 +56,7 @@ const formatDate = (dateString: string | null | undefined): string => {
   try {
     const date = new Date(dateString);
     return format(date, 'MMM dd, yyyy');
-  } catch (error) {
+  } catch {
     return 'Invalid date';
   }
 };
